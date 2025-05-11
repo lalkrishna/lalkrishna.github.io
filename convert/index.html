@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: monospace;
+        }
+
+        button {
+            display: inline-block;
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .output {
+            margin-top: 20px;
+            white-space: pre-wrap;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            font-size: 14px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .copy-btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Image Converter</h1>
+        <form id="imageForm">
+            <label for="inputText">Enter Image Block:</label>
+            <textarea id="inputText" rows="6" placeholder="Paste your text block here..."></textarea>
+
+            <label for="width">Enter Image Width (e.g., 190):</label>
+            <input type="text" id="width" placeholder="Enter width...">
+
+            <button type="button" onclick="convertTextBlock()">Convert</button>
+        </form>
+
+        <div class="output" id="output">
+            <button class="copy-btn" onclick="copyOutput()">Copy</button>
+            <pre></pre>
+        </div>
+    </div>
+
+    <script>
+        function convertTextBlock() {
+            const inputText = document.getElementById('inputText').value;
+            const width = document.getElementById('width').value || "190";
+
+            if (!inputText) {
+                alert("Please enter a text block.");
+                return;
+            }
+
+            const regex = /\[([^\]]+)\]\(\"([^\"]+)\"\)/g;
+            let match;
+            let outputText = "";
+
+            while ((match = regex.exec(inputText)) !== null) {
+                const altText = match[1];
+                const imageURL = match[2];
+                outputText += `<img width="${width}" alt="${altText}" src="${imageURL}" />\n`;
+            }
+
+            const outputDiv = document.getElementById('output').querySelector('pre');
+            outputDiv.textContent = outputText.trim();
+        }
+
+        function copyOutput() {
+            const outputDiv = document.getElementById('output').querySelector('pre');
+            const textToCopy = outputDiv.textContent;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert("Output copied to clipboard!");
+            }, (err) => {
+                console.error("Could not copy text: ", err);
+            });
+        }
+    </script>
+</body>
+</html>
